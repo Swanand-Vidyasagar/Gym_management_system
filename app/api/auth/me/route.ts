@@ -42,8 +42,13 @@ export async function GET(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Get me error:', error);
+    // More detailed error for debugging
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { 
+        success: false, 
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }

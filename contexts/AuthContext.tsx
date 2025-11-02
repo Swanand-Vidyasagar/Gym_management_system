@@ -47,21 +47,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
       }
     } catch (error: any) {
-      // Silently handle invalid/expired tokens
-      // This is expected when token doesn't match any user or backend not running
+      // Handle authentication errors
+      const errorMessage = error?.message || '';
+      
+      // Log errors for debugging in production
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Auth loadUser error:', errorMessage);
+      }
+      
+      // Clear invalid tokens
       localStorage.removeItem('token');
-      localStorage.removeItem('currentUser'); // Clean up legacy data
+      localStorage.removeItem('currentUser');
       setToken(null);
       setUser(null);
       
-      // Suppress console errors for expected authentication failures
-      // Only show errors if backend is running but user is truly not found
-      const errorMessage = error?.message || '';
+      // Only suppress expected errors
       const isExpectedError = 
         errorMessage.includes('User not found') ||
         errorMessage.includes('Invalid or expired token') ||
         errorMessage.includes('Cannot connect to server') ||
-        errorMessage.includes('Failed to fetch');
+        errorMessage.includes('Failed to fetch') ||
+        errorMessage.includes('401') ||
+        errorMessage.includes('404');
       
       if (!isExpectedError && errorMessage) {
         console.warn('Auth error:', errorMessage);
