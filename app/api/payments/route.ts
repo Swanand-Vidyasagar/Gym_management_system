@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const { Payment, User, Membership } = require('../../../../backend/models');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 async function getAuthUser(req: NextRequest) {
   try {
@@ -16,6 +14,9 @@ async function getAuthUser(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { Payment, User, Membership } = await import('../../../../backend/models');
+    
     const auth = await getAuthUser(req);
     if (!auth) {
       return NextResponse.json(
@@ -57,6 +58,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { Payment, User, Membership } = await import('../../../../backend/models');
+    
     const auth = await getAuthUser(req);
     if (!auth) {
       return NextResponse.json(

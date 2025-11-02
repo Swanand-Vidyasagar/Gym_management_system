@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const { User, Membership, Payment, Staff } = require('../../../../backend/models');
-const { Op } = require('sequelize');
-const jwt = require('jsonwebtoken');
+import { Op } from 'sequelize';
+import jwt from 'jsonwebtoken';
 
 async function getAuthUser(req: NextRequest) {
   try {
@@ -17,6 +15,9 @@ async function getAuthUser(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { User, Membership, Payment, Staff } = await import('../../../../backend/models');
+    
     const auth = await getAuthUser(req);
     if (!auth) {
       return NextResponse.json(

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Use dynamic require for CommonJS modules
-const { User, Login } = require('../../../../backend/models');
-const { generateToken } = require('../../../../backend/utils/jwt');
-
 export async function POST(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { User, Login } = await import('../../../../backend/models');
+    const { generateToken } = await import('../../../../backend/utils/jwt');
+    
     const body = await req.json();
     const { name, phone, email, address, username, password } = body;
 

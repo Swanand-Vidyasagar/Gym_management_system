@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const { User } = require('../../../../backend/models');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 async function getAuthUser(req: NextRequest) {
   try {
@@ -16,6 +14,9 @@ async function getAuthUser(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { User } = await import('../../../../backend/models');
+    
     const auth = await getAuthUser(req);
     if (!auth) {
       return NextResponse.json(

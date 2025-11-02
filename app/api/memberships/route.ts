@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const { Membership, User, Staff } = require('../../../../backend/models');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 async function getAuthUser(req: NextRequest) {
   try {
@@ -16,6 +14,9 @@ async function getAuthUser(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { Membership, User, Staff } = await import('../../../../backend/models');
+    
     const auth = await getAuthUser(req);
     if (!auth) {
       return NextResponse.json(
@@ -57,6 +58,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    // Dynamic import to avoid build-time issues
+    const { Membership, User, Staff } = await import('../../../../backend/models');
+    const { calculateEndDate, getMembershipPrice } = await import('../../../../backend/utils/membershipCalculator');
+    
     const auth = await getAuthUser(req);
     if (!auth) {
       return NextResponse.json(
@@ -74,8 +79,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    const { calculateEndDate, getMembershipPrice } = require('../../../../backend/utils/membershipCalculator');
 
     const user = await User.findByPk(user_id);
     if (!user) {
